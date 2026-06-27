@@ -9,7 +9,7 @@ const ToastViewport = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 right-0 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 sm:top-4 sm:right-4 sm:max-w-[380px]",
+      "fixed top-0 left-1/2 z-[100] flex max-h-screen w-full -translate-x-1/2 flex-col gap-2 p-4 sm:top-4 sm:max-w-[380px]",
       className
     )}
     {...props}
@@ -18,11 +18,11 @@ const ToastViewport = React.forwardRef(({ className, ...props }, ref) => (
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const variantStyles = {
-  default:     "border-border/60 bg-card text-foreground",
-  success:     "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-  destructive: "border-destructive/40 bg-destructive/10 text-red-300",
-  warning:     "border-amber-500/30 bg-amber-500/10 text-amber-300",
-  info:        "border-primary/30 bg-primary/10 text-primary",
+  default:     "border-border bg-card text-foreground",
+  success:     "border-emerald-200 bg-emerald-50/90 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300",
+  destructive: "border-red-200 bg-red-50/90 text-red-800 dark:border-destructive/40 dark:bg-destructive/10 dark:text-red-300",
+  warning:     "border-amber-200 bg-amber-50/90 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300",
+  info:        "border-blue-200 bg-blue-50/90 text-blue-800 dark:border-primary/30 dark:bg-primary/10 dark:text-primary",
 };
 
 const variantIcons = {
