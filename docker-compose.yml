@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: taskspace-db
+    environment:
+      POSTGRES_DB: taskspace
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taskspace-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=taskspace
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - FRONTEND_URL=http://localhost:3000
+      - JWT_SECRET=qewewqrwqrdwefretgrtrtewrtrewertrewterwtere
+    depends_on:
+      - db
+    volumes:
+      # Mount the local backend folder to /app for hot-reloading
+      - ./backend:/app
+      # Prevent the local node_modules from overwriting the container's node_modules
+      - /app/node_modules
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: taskspace-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    volumes:
+      # Mount the local frontend folder to /app for hot-reloading
+      - ./frontend:/app
+      # Prevent the local node_modules from overwriting the container's node_modules
+      - /app/node_modules
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
