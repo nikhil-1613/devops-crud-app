@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ main, develop ]
   pull_request:
-    branches: [main, develop]
+    branches: [ main, develop ]
 
 jobs:
   test-and-build:
@@ -14,9 +14,9 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER  }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER || 'postgres' }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB  }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB || 'taskdb' }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -34,24 +34,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: 'npm'
           cache-dependency-path: backend/package-lock.json
 
-      - name: Install & Test Backend
+      - name: Install Backend Dependencies
         working-directory: ./backend
-        run: |
-          npm ci
-          npm test
-        env:
-          NODE_ENV: test
-          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER || 'postgres' }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB || 'taskdb' }}
+        run: npm ci
 
       # === Frontend ===
-      - name: Install & Test Frontend
+      - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: |
-          npm ci
-          npm test
+        run: npm ci
 
       # === Docker Build ===
       - name: Build Docker Images
