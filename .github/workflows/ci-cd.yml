@@ -2,64 +2,57 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main,develop]
+    branches: [main, develop]
   pull_request:
-    branches: [main,develop]
+    branches: [main, develop]
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
 
     services:
-      postgres:   
-        image: postgres:15
+      postgres:
+        image: postgres:16
         env:
-          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
-          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER  }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB  }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports: 
-          - "5433:5433"
-  
+        ports:
+          - 5432:5432
+
     steps:
-      -name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    #Load .env file 
-      -name: Load .env file
-      uses: xom9ikk/dotenv@v2
-      with:
-        path: .env
+      # === Backend ===
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
 
-    # ==Backend ==
-    -name: Setup Node.js
-    uses: actions/setup-node@v3
-    with:
-      node-version: 20
-      cache: 'npm'
-      cache-dependency-path: backend/package-lock.json
+      - name: Install & Test Backend
+        working-directory: ./backend
+        run: |
+          npm ci
+          npm test
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER || 'postgres' }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB || 'taskdb' }}
 
+      # === Frontend ===
+      - name: Install & Test Frontend
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm test
 
-    -name: Install & Test Backend
-    working-directory: ./backend
-    run: |
-      npm ci
-      npm test
-    env:
-    NODE_ENV: test
-    DATABASE_URL: postgresql://${{secrets.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@localhost:5433/${{secrets.POSTGRES_DB}}
-
-  # ==FRONTEND ==
-    -name: Install & Test Fronted
-    working-directory: ./frontend
-    run: |
-      npm ci
-      npm test
-
-  # ==DOCKER BUILD ===
-    -name: Build Docker Images
-    run: docker compose build --no-cache
+      # === Docker Build ===
+      - name: Build Docker Images
+        run: docker compose build --no-cache

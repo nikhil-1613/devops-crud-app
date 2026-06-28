@@ -43,7 +43,7 @@ You do not need Node.js or PostgreSQL installed on your host machine to run this
 3. Access the services:
    - **Frontend:** http://localhost:3000
    - **Backend API:** http://localhost:5000
-   - **Database:** `localhost:5432` (User: `postgres`, Password: `postgres`)
+   - **Database:** `localhost:5432` (User: `postgres`, Password: `password`)
 
 ### Stopping the Application
 
