@@ -23,7 +23,10 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 3000
 
-CMD ["nginx", "-g", "daemon off;"]# FROM node:20-alpine
+CMD ["nginx", "-g", "daemon off;"]
+
+
+# FROM node:20-alpine
 
 # WORKDIR /app
 
