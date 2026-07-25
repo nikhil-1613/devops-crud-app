@@ -12,18 +12,14 @@ RUN npm run build
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
+# Remove default config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Create custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy built files
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Optional: Custom nginx config for React Router
-RUN echo 'server { \
-    listen 3000; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-    try_files $uri $uri/ /index.html; \
-    } \
-    }' > /etc/nginx/conf.d/default.conf
 
 EXPOSE 3000
 
