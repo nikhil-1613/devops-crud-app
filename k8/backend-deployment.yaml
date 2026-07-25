@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+
+    spec:
+      containers:
+        - name: backend
+          image: devops-crud-app-backend:latest
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 5000
+
+          env:
+            # Normal configuration
+            - name: NODE_ENV
+              value: "production"
+
+            - name: DB_HOST
+              value: "postgres"
+
+            - name: DB_PORT
+              value: "5432"
+
+            # PostgreSQL credentials from postgres-secret
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+
+            # JWT secret from backend-secret
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: JWT_SECRET
+
+            # Normal configuration
+            - name: FRONTEND_URL
+              value: "*"
