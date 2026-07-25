@@ -26,13 +26,22 @@ spec:
           env:
             # Normal configuration
             - name: NODE_ENV
-              value: "production"
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: NODE_ENV
 
             - name: DB_HOST
-              value: "postgres"
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DB_HOST
 
             - name: DB_PORT
-              value: "5432"
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DB_PORT
 
             # PostgreSQL credentials from postgres-secret
             - name: DB_NAME
