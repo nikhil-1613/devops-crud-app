@@ -9,7 +9,9 @@ export function useToastStore() {
   const [toasts, setToasts] = useState([]);
 
   const addToast = useCallback((toast) => {
-    const id = crypto.randomUUID();
+    const id = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     setToasts((prev) => [...prev, { ...toast, id }]);
     return id;
   }, []);

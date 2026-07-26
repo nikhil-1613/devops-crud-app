@@ -8,4 +8,4 @@ spec:
   ports:
     - port: 3000
       targetPort: 3000
-  type: LoadBalancer # This will give us a URL in Minikube
+  type: ClusterIP # This will give us a URL in Minikube
