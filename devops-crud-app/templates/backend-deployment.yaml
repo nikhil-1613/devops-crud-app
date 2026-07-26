@@ -40,27 +40,41 @@ spec:
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}
 
+          # Startup probe
+          # Kubernetes waits for the application to start before
+          # enabling liveness and readiness checks.
+          startupProbe:
+            httpGet:
+              path: {{ .Values.backend.probes.startup.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.backend.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.backend.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.backend.probes.startup.failureThreshold }}
+
+          # Liveness probe
+          # Restarts the container if the application becomes unhealthy.
           livenessProbe:
             httpGet:
               path: {{ .Values.backend.probes.liveness.path }}
-              port: 5000
-            initialDelaySeconds: {{ .Values.backend.probes.liveness.initialDelaySeconds }}
+              port: http
             periodSeconds: {{ .Values.backend.probes.liveness.periodSeconds }}
             timeoutSeconds: {{ .Values.backend.probes.liveness.timeoutSeconds }}
-            failureThreshold: 3
+            failureThreshold: {{ .Values.backend.probes.liveness.failureThreshold }}
 
+          # Readiness probe
+          # Controls whether the pod receives traffic from the Service.
           readinessProbe:
             httpGet:
               path: {{ .Values.backend.probes.readiness.path }}
-              port: 5000
-            initialDelaySeconds: {{ .Values.backend.probes.readiness.initialDelaySeconds }}
+              port: http
             periodSeconds: {{ .Values.backend.probes.readiness.periodSeconds }}
             timeoutSeconds: {{ .Values.backend.probes.readiness.timeoutSeconds }}
-            failureThreshold: 3
+            failureThreshold: {{ .Values.backend.probes.readiness.failureThreshold }}
 
           env:
 
-            # Normal configuration
+            # Backend configuration from ConfigMap
             - name: NODE_ENV
               valueFrom:
                 configMapKeyRef:
@@ -79,7 +93,7 @@ spec:
                   name: backend-config
                   key: DB_PORT
 
-            # PostgreSQL credentials
+            # PostgreSQL credentials from Secret
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
@@ -98,7 +112,7 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
 
-            # JWT secret
+            # JWT secret from Secret
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
@@ -108,3 +122,4 @@ spec:
             # Frontend URL
             - name: FRONTEND_URL
               value: "*"
+
