@@ -1,0 +1,46 @@
+# Setup Terraform for AWS EKS
+
+This plan outlines the steps to build the Infrastructure as Code (IaC) required to run your Helm chart on a production-grade Amazon Elastic Kubernetes Service (EKS) cluster.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **AWS Account Required**: To apply this Terraform code later, you will need an active AWS account, AWS CLI installed, and configured credentials (`aws configure`). If you don't want to actually deploy it (to avoid AWS charges), we can still write the code to learn how it works!
+
+## Proposed Changes
+
+We will create a new `terraform/` directory with a modular configuration. We will use the official, well-maintained Terraform AWS modules for the VPC and EKS cluster to follow industry best practices.
+
+### terraform/
+
+#### [NEW] [provider.tf](file:///c:/Users/nikhi/Desktop/devops/devops-crud-app/terraform/provider.tf)
+Configures the AWS provider, sets the default region (e.g., `us-east-1`), and specifies the required Terraform versions.
+
+#### [NEW] [variables.tf](file:///c:/Users/nikhi/Desktop/devops/devops-crud-app/terraform/variables.tf)
+Defines variables like the cluster name, region, and node instance types to make the configuration reusable.
+
+#### [NEW] [vpc.tf](file:///c:/Users/nikhi/Desktop/devops/devops-crud-app/terraform/vpc.tf)
+Uses the `terraform-aws-modules/vpc/aws` module to provision:
+- A new VPC
+- 2 Public Subnets (for the Ingress Controller/Load Balancers)
+- 2 Private Subnets (for your application Pods and Nodes)
+- NAT Gateways for outbound internet access
+
+#### [NEW] [eks.tf](file:///c:/Users/nikhi/Desktop/devops/devops-crud-app/terraform/eks.tf)
+Uses the `terraform-aws-modules/eks/aws` module to provision:
+- The EKS Control Plane
+- Managed Node Groups (the EC2 instances where your pods will run)
+- Required IAM roles and policies
+
+#### [NEW] [outputs.tf](file:///c:/Users/nikhi/Desktop/devops/devops-crud-app/terraform/outputs.tf)
+Outputs the cluster endpoint and the command needed to configure your local `kubectl` to connect to the new cluster.
+
+## Verification Plan
+
+### Automated Verification
+- Run `terraform fmt` to ensure the code is formatted correctly.
+- Run `terraform validate` to ensure the syntax and module configurations are valid.
+
+### Manual Verification
+- Run `terraform plan` to see the exact AWS resources that would be created.
+- (Optional) Run `terraform apply` to actually provision the cluster in AWS.
