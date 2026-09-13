@@ -1,66 +1,208 @@
-# TaskSpace (DevOps CRUD App)
+# TaskSpace (Production-Ready DevOps CRUD Application)
 
-A full-stack task management application built to practice DevOps principles, including Containerization (Docker), CI/CD, and Kubernetes orchestration.
+TaskSpace is a full-stack task management application built to gain hands-on experience with modern DevOps practices. The project demonstrates how an application evolves from local development to a production-ready deployment using containerization, Kubernetes orchestration, Infrastructure as Code, and automated CI/CD pipelines.
+
+Rather than focusing only on application development, this project emphasizes deploying, scaling, securing, and monitoring applications in a cloud-native environment.
 
 ## 🚀 Tech Stack
 
-- **Frontend:** React.js, Vite, TailwindCSS
-- **Backend:** Node.js, Express, JWT Authentication
-- **Database:** PostgreSQL
-- **Infrastructure:** Docker & Docker Compose
+### Frontend
 
-## 📁 Project Structure
+* React.js
+* Vite
+* Tailwind CSS
 
-```text
-.
-├── backend/           # Node.js Express API
-├── frontend/          # React + Vite application
-├── docker-compose.yml # Orchestrates local development
-└── README.md          # Project documentation
+### Backend
+
+* Node.js
+* Express.js
+* JWT Authentication
+
+### Database
+
+* PostgreSQL
+
+### DevOps & Infrastructure
+
+* Docker
+* Docker Compose
+* Kubernetes
+* Helm Charts
+* GitHub Actions
+* Terraform (In Progress)
+
+---
+
+# Project Architecture
+
+```
+                 GitHub
+                    │
+            GitHub Actions CI
+                    │
+       Build & Push Docker Images
+                    │
+          Kubernetes Cluster
+     ┌────────────┬─────────────┐
+     │            │             │
+ Frontend      Backend     PostgreSQL
+ Deployment    Deployment   StatefulSet
+     │            │             │
+     └──────Ingress─────────────┘
+                │
+           End Users
+
+Persistent Volume Claims
+ConfigMaps
+Secrets
+Horizontal Pod Autoscaler
+Metrics Server
 ```
 
-## 🐳 Running Locally with Docker
+---
 
-You do not need Node.js or PostgreSQL installed on your host machine to run this project. Everything runs inside Docker containers.
+# DevOps Features Implemented
 
-### Prerequisites
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+## Docker
 
-### Quick Start
+* Containerized React frontend
+* Containerized Express backend
+* PostgreSQL container
+* Multi-container orchestration using Docker Compose
+* Environment variable management
+* Multi-stage Docker builds
 
-1. Clone the repository:
-   ```bash
-   git clone <your-repository-url>
-   cd devops-crud-app
-   ```
+---
 
-2. Start the application:
-   ```bash
-   docker-compose up -d --build
-   ```
+## Kubernetes
 
-3. Access the services:
-   - **Frontend:** http://localhost:3000
-   - **Backend API:** http://localhost:5000
-   - **Database:** `localhost:5432` (User: `postgres`, Password: `password`)
+The application has been fully migrated from Docker Compose to Kubernetes.
 
-### Stopping the Application
+Implemented components include:
 
-To stop the containers without destroying your database data:
-```bash
-docker-compose stop
+* Deployments
+* Services
+* Ingress Controller
+* ConfigMaps
+* Secrets
+* Persistent Volume Claims (PVC)
+* StatefulSet for PostgreSQL
+* Horizontal Pod Autoscaler (HPA)
+* Metrics Server
+* Resource Requests & Limits
+* Namespace isolation
+* Health Checks (Liveness & Readiness Probes)
+
+---
+
+## CI/CD
+
+Implemented using GitHub Actions.
+
+Pipeline includes:
+
+* Code checkout
+* Dependency installation
+* Application build
+* Docker image build
+* Image tagging
+* Docker image push
+* Kubernetes deployment updates
+
+Future enhancements include:
+
+* Automated testing
+* Security scanning
+* Helm-based deployments
+* GitOps with Argo CD
+
+---
+
+## Helm (Currently Learning)
+
+The project is now being migrated to Helm for package management.
+
+Current focus:
+
+* Helm chart structure
+* Templates
+* Values files
+* Environment-specific configurations
+* Reusable Kubernetes manifests
+* Release management and upgrades
+
+---
+
+## Infrastructure as Code (Upcoming)
+
+Terraform will be used to provision cloud infrastructure including:
+
+* VPC
+* Networking
+* Kubernetes Cluster
+* Compute resources
+* IAM
+* Storage
+
+---
+
+# Project Structure
+
+```
+taskspace/
+│
+├── frontend/
+├── backend/
+├── k8s/
+│   ├── namespace.yaml
+│   ├── frontend-deployment.yaml
+│   ├── backend-deployment.yaml
+│   ├── postgres-statefulset.yaml
+│   ├── ingress.yaml
+│   ├── configmap.yaml
+│   ├── secret.yaml
+│   ├── pvc.yaml
+│   ├── hpa.yaml
+│   └── metrics-server/
+│
+├── helm/
+│   └── taskspace/
+│
+├── .github/
+│   └── workflows/
+│
+├── docker-compose.yml
+├── Dockerfile
+└── README.md
 ```
 
-To stop and remove containers:
-```bash
-docker-compose down
-```
+---
 
-## 🛤️ DevOps Learning Roadmap
+# Learning Journey
 
-This project is structured to progress through various DevOps stages:
-1. [x] **Local Containerization:** Dockerizing frontend, backend, and DB using `docker-compose`.
-2. [ ] **CI/CD:** Implementing GitHub Actions/GitLab CI for automated testing and image building.
-3. [ ] **Kubernetes:** Deploying the application to a local K8s cluster (Minikube/Kind) with Deployments, Services, and StatefulSets.
-4. [ ] **Infrastructure as Code (IaC):** Using Terraform for cloud provisioning.
+* ✅ Containerized the complete application using Docker.
+* ✅ Orchestrated services with Docker Compose.
+* ✅ Migrated the application to Kubernetes.
+* ✅ Configured Deployments, Services, ConfigMaps, Secrets, PVCs, and StatefulSets.
+* ✅ Implemented Ingress for external access.
+* ✅ Enabled Horizontal Pod Autoscaling using Metrics Server.
+* ✅ Built CI/CD pipelines with GitHub Actions.
+* 🔄 Learning Helm to simplify Kubernetes deployments.
+* ⏳ Planning Infrastructure provisioning using Terraform.
+* ⏳ Future goal: GitOps deployment with Argo CD.
+
+---
+
+# Future Enhancements
+
+* Terraform Infrastructure
+* Argo CD (GitOps)
+* Prometheus & Grafana Monitoring
+* Loki Logging
+* Trivy Image Scanning
+* SonarQube Code Analysis
+* Blue-Green Deployments
+* Canary Releases
+* Kubernetes RBAC
+* OpenTelemetry
+* Production deployment on AWS (EKS)
