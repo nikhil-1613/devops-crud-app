@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: backend-config
+  labels:
+    {{- include "devops-crud-app.labels" . | nindent 4 }}
+
+data:
+  NODE_ENV: {{ .Values.config.backend.NODE_ENV | quote }}
+  PORT: {{ .Values.config.backend.PORT | quote }}
+  DB_HOST: {{ include "devops-crud-app.fullname" . }}-postgres
+  DB_PORT: {{ .Values.config.backend.DB_PORT | quote }}

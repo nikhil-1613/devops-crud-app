@@ -1,0 +1,16 @@
+{
+  // Tell VS Code that files inside Helm templates/ directories are Helm templates,
+  // not plain YAML — this silences false YAML lint errors from {{ }} syntax.
+  "files.associations": {
+    "**/templates/*.yaml": "helm",
+    "**/templates/*.tpl": "helm"
+  },
+
+  // Disable the built-in YAML validator for Helm template files specifically
+  "yaml.validate": true,
+  "yaml.schemas": {},
+
+  "[helm]": {
+    "editor.formatOnSave": false
+  }
+}

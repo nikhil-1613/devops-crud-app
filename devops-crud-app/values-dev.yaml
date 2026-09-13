@@ -1,0 +1,51 @@
+# ─── Development environment overrides ────────────────────────────────────────
+# Usage: helm install myapp ./devops-crud-app -f values-dev.yaml
+#
+# These values override the base values.yaml for a lightweight dev environment.
+# ──────────────────────────────────────────────────────────────────────────────
+
+backend:
+  # Single replica — saves resources in dev
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+# Disable HPA in dev — fixed replica count is fine
+backendHPA:
+  enabled: false
+
+frontend:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+frontendHPA:
+  enabled: false
+
+postgres:
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+  storage:
+    size: 512Mi
+
+config:
+  backend:
+    NODE_ENV: "development"

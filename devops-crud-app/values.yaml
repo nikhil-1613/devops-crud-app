@@ -91,3 +91,70 @@ frontendHPA:
   minReplicas: 2
   maxReplicas: 5
   targetCPUUtilizationPercentage: 50
+
+postgres:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  image:
+    repository: postgres
+    tag: "16"
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 5432
+
+  storage:
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    storageClass: standard
+
+  probes:
+    liveness:
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+    readiness:
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+# ─── ConfigMap values ──────────────────────────────────────────────────────────
+config:
+  backend:
+    NODE_ENV: "production"
+    PORT: "5000"
+    # DB_HOST is set dynamically in the template using the fullname helper
+    DB_PORT: "5432"
+
+  frontend:
+    VITE_API_URL: "http://myapp.local/api"
+
+# ─── Secrets ───────────────────────────────────────────────────────────────────
+# WARNING: Override these with --set flags or a gitignored secrets.yaml file.
+# NEVER commit real passwords here.
+secrets:
+  postgres:
+    POSTGRES_DB: "taskdb"
+    POSTGRES_USER: "postgres"
+    POSTGRES_PASSWORD: "changeme"   # Override: --set secrets.postgres.POSTGRES_PASSWORD=<real>
+
+  backend:
+    JWT_SECRET: "changeme"          # Override: --set secrets.backend.JWT_SECRET=<real>
+
+# ─── Ingress ───────────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  host: myapp.local

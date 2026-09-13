@@ -71,3 +71,9 @@ spec:
                 configMapKeyRef:
                   name: frontend-config
                   key: VITE_API_URL
+
+            - name: BACKEND_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: BACKEND_HOST

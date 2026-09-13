@@ -1,0 +1,60 @@
+{{- $fullname := include "devops-crud-app.fullname" . }}
+🎉 devops-crud-app has been deployed successfully!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 Release   : {{ .Release.Name }}
+📁 Namespace : {{ .Release.Namespace }}
+📋 Chart     : {{ .Chart.Name }}-{{ .Chart.Version }}
+🏷️  App Ver   : {{ .Chart.AppVersion }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 Accessing the Application
+{{- if .Values.ingress.enabled }}
+
+  1. Start the Minikube tunnel (keep this running in a separate terminal):
+     $ minikube tunnel
+
+  2. Add this entry to your hosts file:
+     127.0.0.1  {{ .Values.ingress.host }}
+
+     Windows : C:\Windows\System32\drivers\etc\hosts
+     Linux   : /etc/hosts
+
+  3. Open in browser:
+     Frontend  →  http://{{ .Values.ingress.host }}
+     API       →  http://{{ .Values.ingress.host }}/api
+
+{{- else }}
+
+  Ingress is disabled. Use port-forwarding to access the app:
+
+  $ kubectl port-forward svc/{{ $fullname }}-frontend 3000:{{ .Values.frontend.service.port }}
+  $ kubectl port-forward svc/{{ $fullname }}-backend  5000:{{ .Values.backend.service.port }}
+
+  Then open: http://localhost:3000
+
+{{- end }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 Useful Commands
+
+  Check pod status:
+  $ kubectl get pods -l app.kubernetes.io/instance={{ .Release.Name }}
+
+  View logs:
+  $ kubectl logs -l app=backend --tail=50
+  $ kubectl logs -l app=frontend --tail=50
+
+  Check autoscalers:
+  $ kubectl get hpa
+
+  Upgrade the release:
+  $ helm upgrade {{ .Release.Name }} ./devops-crud-app
+
+  Rollback to previous version:
+  $ helm rollback {{ .Release.Name }} 1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
